@@ -1,8 +1,7 @@
-FROM scratch
+FROM busybox
 MAINTAINER Lorin Hochstein <lorin@ansiblebook.com>
 
-RUN mkdir /data
-VOLUME /data
+VOLUME /var/lib/postgresql/data
 
 
 
