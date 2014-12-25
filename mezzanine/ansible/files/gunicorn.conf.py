@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
 import multiprocessing
+import os
 
-bind = "127.0.0.1:{{ mezzanine_gunicorn_port }}"
+bind = "127.0.0.1:{}".format(os.environ["GUNICORN_PORT"])
 workers = multiprocessing.cpu_count() * 2 + 1
 loglevel = "error"
-proc_name = "{{ mezzanine_proj_name }}"
+proc_name = "mezzanine"
