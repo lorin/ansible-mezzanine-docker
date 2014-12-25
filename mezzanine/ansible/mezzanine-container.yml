@@ -6,7 +6,6 @@
   tasks:
   - name: install apt packages
     apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
-    sudo: True
     with_items:
       - git
       - libjpeg-dev
@@ -27,8 +26,8 @@
   - name: install requirements.txt
     pip: requirements={{ mezzanine_proj_path }}/{{ mezzanine_reqs_path }}
   - name: generate the settings file
-    template: src=local_settings.py.j2 dest={{ mezzanine_proj_path }}/local_settings.py
+    copy: src=files/local_settings.py dest={{ mezzanine_proj_path }}/local_settings.py
   - name: collect static content
     django_manage: command=collectstatic app_path="{{ mezzanine_proj_path }}"
   - name: set the gunicorn config file
-    template: src=gunicorn.conf.py.j2 dest={{ mezzanine_proj_path }}/gunicorn.conf.py
+    copy: src=files/gunicorn.conf.py dest={{ mezzanine_proj_path }}/gunicorn.conf.py
