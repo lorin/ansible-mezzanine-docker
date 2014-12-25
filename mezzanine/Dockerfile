@@ -1,6 +1,6 @@
 FROM ansible/ubuntu14.04-ansible:stable
 
-ADD .. /srv/ansible
+ADD ansible /srv/ansible
 WORKDIR /srv/ansible
 
 RUN ansible-playbook mezzanine-container.yml -c local
