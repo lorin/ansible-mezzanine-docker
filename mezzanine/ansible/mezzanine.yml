@@ -1,0 +1,34 @@
+- name: Create Mezzanine container
+  vars:
+    mezzanine_repo_url: https://github.com/lorin/mezzanine-example.git
+    mezzanine_proj_path: /srv/mezzanine
+    mezzanine_reqs_path: requirements.txt
+  tasks:
+  - name: install apt packages
+    apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+    sudo: True
+    with_items:
+      - git
+      - libjpeg-dev
+      - libpq-dev
+      - python-dev
+      - python-pip
+      - python-psycopg2
+      - python-setuptools
+  - name: check out the repository on the host
+    git: repo={{ mezzanine_repo_url }} dest={{ mezzanine_proj_path }} accept_hostkey=yes
+  - name: install required python packages
+    pip: name={{ item }}
+    with_items:
+      - south
+      - psycopg2
+      - django-compressor
+      - python-memcached
+  - name: install requirements.txt
+    pip: requirements={{ mezzanine_proj_path }}/{{ mezzanine_reqs_path }}
+  - name: generate the settings file
+    template: src=local_settings.py.j2 dest={{ mezzanine_proj_path }}/local_settings.py
+  - name: collect static content
+    django_manage: command=collectstatic app_path="{{ mezzanine_proj_path }}"
+  - name: set the gunicorn config file
+    template: src=gunicorn.conf.py.j2 dest={{ mezzanine_proj_path }}/gunicorn.conf.py
