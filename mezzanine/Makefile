@@ -1,10 +1,10 @@
-.PHONY: image
+.PHONY: image run bash
 
 IMAGE=lorin/mezzanine
 
 image:
 	docker build -t $(IMAGE) .
 
-run:
+bash:
 	docker run -ti $(IMAGE) /bin/bash
 
