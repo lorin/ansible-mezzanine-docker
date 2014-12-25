@@ -5,7 +5,6 @@ WORKDIR /srv/ansible
 
 RUN ansible-playbook mezzanine-container.yml -c local
 
-RUN mkdir /srv
 WORKDIR /srv/mezzanine
 
 EXPOSE 8000
