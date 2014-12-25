@@ -1,23 +1,24 @@
 from __future__ import unicode_literals
+import os
 
-SECRET_KEY = "{{ secret_key }}"
-NEVERCACHE_KEY = "{{ nevercache_key }}"
-ALLOWED_HOSTS = [{% for domain in domains %}"{{ domain }}",{% endfor %}]
+SECRET_KEY = os.environ["SECRET_KEY"]
+NEVERCACHE_KEY = os.environ["NEVERCACHE_KEY"]
+ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"]
 
 DATABASES = {
     "default": {
         # Ends with "postgresql_psycopg2", "mysql", "sqlite3" or "oracle".
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         # DB name or path to database file if using sqlite3.
-        "NAME": "{{ mezzanine_proj_name }}",
+        "NAME": os.environ["DATABASE_NAME"],
         # Not used with sqlite3.
-        "USER": "{{ mezzanine_proj_name }}",
+        "USER": os.environ["DATABASE_USER"],
         # Not used with sqlite3.
-        "PASSWORD": "{{ db_pass }}",
+        "PASSWORD": os.environ["DATABASE_PASSWORD"],
         # Set to empty string for localhost. Not used with sqlite3.
-        "HOST": "{{ database_host | default("localhost") }}",
+        "HOST": os.environ["DATABASE_HOST"],
         # Set to empty string for default. Not used with sqlite3.
-        "PORT": "{{ database_port }}",
+        "PORT": os.environ["DATABASE_PORT"]
     }
 }
 
@@ -25,19 +26,19 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
 
 CACHE_MIDDLEWARE_SECONDS = 60
 
-CACHE_MIDDLEWARE_KEY_PREFIX = "{{ mezzanine_proj_name }}"
+CACHE_MIDDLEWARE_KEY_PREFIX = "mezzanine"
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": "127.0.0.1:11211",
+        "LOCATION": os.environ["MEMCACHED_LOCATION"],
     }
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
-TWITTER_ACCESS_TOKEN_KEY = "{{ twitter_access_token_key }}"
-TWITTER_ACCESS_TOKEN_SECRET = "{{ twitter_access_token_secret }}"
-TWITTER_CONSUMER_KEY = "{{ twitter_consumer_key }}"
-TWITTER_CONSUMER_SERCRET = "{{ twitter_consumer_secret }}"
+TWITTER_ACCESS_TOKEN_KEY = os.environ["TWITTER_ACCESS_TOKEN_KEY "]
+TWITTER_ACCESS_TOKEN_SECRET = os.environ["TWITTER_ACCESS_TOKEN_SECRET "]
+TWITTER_CONSUMER_KEY = os.environ["TWITTER_CONSUMER_KEY "]
+TWITTER_CONSUMER_SERCRET = os.environ["TWITTER_CONSUMER_SERCRET "]
 TWITTER_DEFAULT_QUERY = "from:ansiblebook"
