@@ -1,4 +1,10 @@
-.PHONY: container
+.PHONY: image
 
-container:
-	docker build -t lorin/mezzanine .
+IMAGE=lorin/mezzanine
+
+image:
+	docker build -t $(IMAGE) .
+
+run:
+	docker run -ti $(IMAGE) /bin/bash
+
