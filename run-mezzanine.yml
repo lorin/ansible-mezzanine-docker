@@ -1,0 +1,20 @@
+- name: run mezzanine from containers
+  hosts: localhost
+  vars:
+    database_user: mezzanine
+    database_password: password
+
+  tasks:
+    - name: create data volume
+      docker_image: path=data-volume name=lorin/mezzanine-data
+    - name: start the postgres container
+      docker:
+        image: postgres
+        ports: 5432
+        volumes_from: data-volume
+        env: >
+          POSTGRES_USER={{ database_user }},POSTGRES_PASSWORD={{ database_password }}
+      register: postgres
+    - debug: var=postgres
+
+
