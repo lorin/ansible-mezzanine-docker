@@ -1,4 +1,5 @@
 - name: Create Mezzanine container
+  hosts: local
   vars:
     mezzanine_repo_url: https://github.com/lorin/mezzanine-example.git
     mezzanine_proj_path: /srv/mezzanine
