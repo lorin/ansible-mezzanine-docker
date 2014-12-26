@@ -34,7 +34,7 @@
           POSTGRES_PASSWORD: "{{ database_password }}"
     - name: initialize database
       docker:
-        image: lorin/mezzanine
+        image: lorin/mezzanine:latest
         command: python manage.py {{ item }} --noinput
         detach: False
         env: "{{ mezzanine_env }}"
@@ -45,7 +45,7 @@
       register: django
     - name: run mezzanine
       docker:
-        image: lorin/mezzanine
+        image: lorin/mezzanine:latest
         name: mezzanine
         env: "{{ mezzanine_env }}"
         publish_all_ports: True
