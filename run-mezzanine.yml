@@ -27,7 +27,7 @@
     - name: start the postgres container
       docker:
         image: postgres
-        ports: "{{ database_port }}"
+        publish_all_ports: True
         volumes_from: data-volume
         env:
           POSTGRES_USER: "{{ database_user }}"
@@ -46,7 +46,7 @@
     - name: run mezzanine
       docker:
         image: lorin/mezzanine
+        name: mezzanine
         env: "{{ mezzanine_env }}"
-        ports: "{{ gunicorn_port }}"
+        publish_all_ports: True
       register: mezzanine
-    - debug: var=mezzanine
