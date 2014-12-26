@@ -28,12 +28,12 @@ CACHE_MIDDLEWARE_SECONDS = 60
 
 CACHE_MIDDLEWARE_KEY_PREFIX = "mezzanine"
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": os.environ.get("MEMCACHED_LOCATION", ""),
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+#         "LOCATION": os.environ.get("MEMCACHED_LOCATION", ""),
+#     }
+# }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
