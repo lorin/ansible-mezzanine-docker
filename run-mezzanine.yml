@@ -10,6 +10,16 @@
     secret_key: randomsecretkey
     nevercache_key: randomnevercachekey
     gunicorn_port: 8000
+    mezzanine_env:
+      SECRET_KEY: "{{ secret_key }}"
+      NEVERCACHE_KEY: "{{ nevercache_key }}"
+      ALLOWED_HOSTS: "*"
+      DATABASE_NAME: "{{ database_name }}"
+      DATABASE_USER: "{{ database_user }}"
+      DATABASE_PASSWORD: "{{ database_password }}"
+      DATABASE_HOST: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
+      DATABASE_PORT: "{{ database_port }}"
+      GUNICORN_PORT: "{{ gunicorn_port }}"
 
   tasks:
     - name: create data volume
@@ -27,20 +37,16 @@
         image: lorin/mezzanine
         command: python manage.py {{ item }} --noinput
         detach: False
-        env:
-          SECRET_KEY: "{{ secret_key }}"
-          NEVERCACHE_KEY: "{{ nevercache_key }}"
-          ALLOWED_HOSTS: "*"
-          DATABASE_NAME: "{{ database_name }}"
-          DATABASE_USER: "{{ database_user }}"
-          DATABASE_PASSWORD: "{{ database_password }}"
-          DATABASE_HOST: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
-          DATABASE_PORT: "{{ database_port }}"
-          GUNICORN_PORT: "{{ gunicorn_port }}"
+        env: "{{ mezzanine_env }}"
       with_items:
         - syncdb
         - migrate
         - collectstatic
       register: django
-    - debug: var=django
-
+    - name: run mezzanine
+      docker:
+        image: lorin/mezzanine
+        env: "{{ mezzanine_env }}"
+        ports: "{{ gunicorn_port }}"
+      register: mezzanine
+    - debug: var=mezzanine
