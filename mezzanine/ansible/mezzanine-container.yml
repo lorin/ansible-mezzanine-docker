@@ -9,6 +9,7 @@
     apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
     with_items:
       - git
+      - gunicorn
       - libjpeg-dev
       - libpq-dev
       - python-dev
