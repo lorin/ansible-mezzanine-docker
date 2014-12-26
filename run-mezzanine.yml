@@ -1,8 +1,15 @@
 - name: run mezzanine from containers
   hosts: localhost
   vars:
+    # The postgres container uses the same name for the database
+    # and the user
+    database_name: mezzanine
     database_user: mezzanine
     database_password: password
+    database_port: 5432
+    secret_key: randomsecretkey
+    nevercache_key: randomnevercachekey
+    gunicorn_port: 8000
 
   tasks:
     - name: create data volume
@@ -10,11 +17,30 @@
     - name: start the postgres container
       docker:
         image: postgres
-        ports: 5432
+        ports: "{{ database_port }}"
         volumes_from: data-volume
-        env: >
-          POSTGRES_USER={{ database_user }},POSTGRES_PASSWORD={{ database_password }}
-      register: postgres
-    - debug: var=postgres
-
+        env:
+          POSTGRES_USER: "{{ database_user }}"
+          POSTGRES_PASSWORD: "{{ database_password }}"
+    - name: initialize database
+      docker:
+        image: lorin/mezzanine
+        command: python manage.py {{ item }} --noinput
+        detach: False
+        env:
+          SECRET_KEY: "{{ secret_key }}"
+          NEVERCACHE_KEY: "{{ nevercache_key }}"
+          ALLOWED_HOSTS: "*"
+          DATABASE_NAME: "{{ database_name }}"
+          DATABASE_USER: "{{ database_user }}"
+          DATABASE_PASSWORD: "{{ database_password }}"
+          DATABASE_HOST: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
+          DATABASE_PORT: "{{ database_port }}"
+          GUNICORN_PORT: "{{ gunicorn_port }}"
+      with_items:
+        - syncdb
+        - migrate
+        - collectstatic
+      register: django
+    - debug: var=django
 
