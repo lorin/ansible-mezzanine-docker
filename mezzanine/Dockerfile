@@ -11,4 +11,4 @@ WORKDIR /srv/project
 
 
 EXPOSE 8000
-CMD ["/usr/local/bin/gunicorn_django", "-c", "gunicorn.conf.py"]
+CMD ["gunicorn_django", "-c", "gunicorn.conf.py"]
