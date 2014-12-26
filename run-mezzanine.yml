@@ -1,3 +1,5 @@
+#!/usr/bin/env ansible-playbook
+---
 - name: run mezzanine from containers
   hosts: localhost
   vars:
@@ -17,7 +19,7 @@
       DATABASE_NAME: "{{ database_name }}"
       DATABASE_USER: "{{ database_user }}"
       DATABASE_PASSWORD: "{{ database_password }}"
-      DATABASE_HOST: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
+      DATABASE_HOST: "{{ database_host }}"
       DATABASE_PORT: "{{ database_port }}"
       GUNICORN_PORT: "{{ gunicorn_port }}"
 
@@ -32,6 +34,7 @@
         env:
           POSTGRES_USER: "{{ database_user }}"
           POSTGRES_PASSWORD: "{{ database_password }}"
+    - set_fact: database_host={{ docker_containers[0].NetworkSettings.IPAddress }}
     - name: initialize database
       docker:
         image: lorin/mezzanine:latest
