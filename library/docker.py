@@ -733,14 +733,15 @@ class DockerManager(object):
                   'stdin_open':   self.module.params.get('stdin_open'),
                   'tty':          self.module.params.get('tty'),
                   'dns':          self.module.params.get('dns'),
-                  'volumes_from': self.module.params.get('volumes_from'),
+                  # Comment out volumes_from here or it throws an exception
+                  # 'volumes_from': self.module.params.get('volumes_from'),
                   }
 
         if params['dns'] is not None:
             self.ensure_capability('dns')
 
-        if params['volumes_from'] is not None:
-            self.ensure_capability('volumes_from')
+        # if params['volumes_from'] is not None:
+        #     self.ensure_capability('volumes_from')
 
         extra_params = {}
         if self.module.params.get('insecure_registry'):
