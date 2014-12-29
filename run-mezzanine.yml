@@ -68,8 +68,10 @@
         command: cron -f
     - name: run nginx
       docker:
-        image: nginx:latest
-        publish_all_ports: True
+        image: lorin/nginx-mezzanine:latest
+        ports:
+          - 80:80
+          - 443:443
         name: nginx
         volumes_from:
           - mezzanine-data
