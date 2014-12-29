@@ -1,6 +1,6 @@
 .PHONY: image run bash
 
-IMAGE=lorin/mezzanine
+IMAGE=lorin/nginx-mezzanine
 
 image:
 	docker build -t $(IMAGE) .
