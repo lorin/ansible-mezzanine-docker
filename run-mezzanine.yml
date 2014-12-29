@@ -58,7 +58,7 @@
         image: lorin/mezzanine:latest
         name: mezzanine
         env: "{{ mezzanine_env }}"
-        publish_all_ports: True
+        ports: "{{ gunicorn_port }}:{{ gunicorn_port }}"
         volumes_from: mezzanine-data
     - name: start the mezzanine cron job
       docker:
@@ -74,3 +74,4 @@
         volumes_from:
           - mezzanine-data
           - mezzanine
+        links: mezzanine
