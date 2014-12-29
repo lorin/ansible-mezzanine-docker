@@ -31,3 +31,10 @@
     copy: src=files/local_settings.py dest={{ mezzanine_proj_path }}/local_settings.py
   - name: set the gunicorn config file
     copy: src=files/gunicorn.conf.py dest={{ mezzanine_proj_path }}/gunicorn.conf.py
+  - name: collect static assets into the appropriate directory
+    django_manage: command=collectstatic app_path={{ mezzanine_proj_path }}
+    environment:
+      # We can't run collectstatic if the secret key is blank,
+      # so we just pass in an arbitrary one
+      SECRET_KEY: nonblanksecretkey
+
