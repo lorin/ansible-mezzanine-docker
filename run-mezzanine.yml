@@ -53,3 +53,10 @@
         env: "{{ mezzanine_env }}"
         publish_all_ports: True
       register: mezzanine
+    - name: run nginx
+      tags: nginx
+      docker:
+        image: nginx:latest
+        publish_all_ports: True
+        name: nginx
+        volumes_from: mezzanine
