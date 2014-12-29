@@ -24,17 +24,25 @@
       GUNICORN_PORT: "{{ gunicorn_port }}"
 
   tasks:
-    - name: create data volume
-      docker_image: path=data-volume name=lorin/mezzanine-data
+    - name: create data volume container
+      docker:
+        image: postgres:9.4
+        name: mezzanine-data
+        volumes:
+          - /srv/project/static/media
+        command: /bin/true
     - name: start the postgres container
       docker:
         image: postgres
+        name: postgres:9.4
         publish_all_ports: True
-        volumes_from: data-volume
+        volumes_from: mezzanine-data
         env:
           POSTGRES_USER: "{{ database_user }}"
           POSTGRES_PASSWORD: "{{ database_password }}"
-    - set_fact: database_host={{ docker_containers[0].NetworkSettings.IPAddress }}
+    - set_fact:
+        database_host: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
+        database_port: "{{ docker_containers[0].NetworkSettings.Ports['5432/tcp'].HostPort}}"
     - name: initialize database
       docker:
         image: lorin/mezzanine:latest
@@ -44,19 +52,25 @@
       with_items:
         - syncdb
         - migrate
-        - collectstatic
       register: django
-    - name: run mezzanine
+    - name: start the mezzanine container
       docker:
         image: lorin/mezzanine:latest
         name: mezzanine
         env: "{{ mezzanine_env }}"
         publish_all_ports: True
-      register: mezzanine
+        volumes_from: mezzanine-data
+    - name: start the mezzanine cron job
+      docker:
+        image: lorin/mezzanine:latest
+        name: mezzanine
+        env: "{{ mezzanine_env }}"
+        command: cron -f
     - name: run nginx
-      tags: nginx
       docker:
         image: nginx:latest
         publish_all_ports: True
         name: nginx
-        volumes_from: mezzanine
+        volumes_from:
+          - mezzanine-data
+          - mezzanine
