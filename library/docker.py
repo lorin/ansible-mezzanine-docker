@@ -818,11 +818,7 @@ class DockerManager(object):
             self.client.start(i['Id'], **params)
             self.increment_counter('started')
             if wait:
-                rc = self.client.wait(i['Id'])
-                if rc != 0:
-                    msg = self.client.logs(i['Id'], stdout=True,
-                            stderr=True, stream=False, timestamps=False)
-                    self.module.fail_json(rc=rc, msg=msg)
+                self.wait_for_container(i)
 
     def stop_containers(self, containers):
         for i in containers:
@@ -841,11 +837,21 @@ class DockerManager(object):
             self.client.kill(i['Id'])
             self.increment_counter('killed')
 
-    def restart_containers(self, containers):
+    def restart_containers(self, containers, wait=False):
         for i in containers:
             self.client.restart(i['Id'])
             self.increment_counter('restarted')
+            if wait:
+                self.wait_for_container(i)
 
+    def wait_for_container(self, container):
+        cid = container['Id']
+        rc = self.client.wait(cid)
+        if rc != 0:
+            # Use the container's output as the fail message
+            msg = self.client.logs(cid, stdout=True, stderr=True,
+                                   stream=False, timestamps=False)
+            self.module.fail_json(rc=rc, msg=msg)
 
 def main():
     module = AnsibleModule(
