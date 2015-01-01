@@ -33,8 +33,8 @@
         command: /bin/true
     - name: start the postgres container
       docker:
-        image: postgres
-        name: postgres:9.4
+        image: postgres:9.4
+        name: postgres
         publish_all_ports: True
         volumes_from: mezzanine-data
         env:
@@ -42,7 +42,8 @@
           POSTGRES_PASSWORD: "{{ database_password }}"
     - set_fact:
         database_host: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
-        database_port: "{{ docker_containers[0].NetworkSettings.Ports['5432/tcp'].HostPort}}"
+        database_port: "{{
+        docker_containers[0].NetworkSettings.Ports['5432/tcp'][0].HostPort}}"
     - name: initialize database
       docker:
         image: lorin/mezzanine:latest
