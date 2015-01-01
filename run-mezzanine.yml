@@ -46,7 +46,7 @@
       docker:
         image: lorin/mezzanine:latest
         command: python manage.py {{ item }} --noinput
-        detach: False
+        wait: True
         env: "{{ mezzanine_env }}"
       with_items:
         - syncdb
