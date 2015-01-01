@@ -232,6 +232,10 @@ options:
     default: false
     aliases: []
     version_added: "1.9"
+  wait:
+    description:
+      - Wait until process terminates.
+      - Fails on non-zero return code
 
 author: Cove Schneider, Joshua Conner, Pavel Antonov
 requirements: [ "docker-py >= 0.3.0", "docker >= 0.10.0" ]
@@ -872,6 +876,7 @@ def main():
             name            = dict(default=None),
             net             = dict(default=None),
             insecure_registry = dict(default=False, type='bool'),
+            wait            = dict(default=False, type='bool'),
         )
     )
 
