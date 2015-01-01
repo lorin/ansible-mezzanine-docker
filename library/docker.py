@@ -785,7 +785,7 @@ class DockerManager(object):
 
         return containers
 
-    def start_containers(self, containers):
+    def start_containers(self, containers, wait=False):
         params = {
             'lxc_conf': self.lxc_conf,
             'binds': self.binds,
@@ -817,6 +817,12 @@ class DockerManager(object):
         for i in containers:
             self.client.start(i['Id'], **params)
             self.increment_counter('started')
+            if wait:
+                rc = self.client.wait(i['Id'])
+                if rc != 0:
+                    msg = self.client.logs(i['Id'], stdout=True,
+                            stderr=True, stream=False, timestamps=False)
+                    self.module.fail_json(rc=rc, msg=msg)
 
     def stop_containers(self, containers):
         for i in containers:
@@ -888,6 +894,7 @@ def main():
         count = int(module.params.get('count'))
         name = module.params.get('name')
         image = module.params.get('image')
+        wait = module.params.get('wait')
 
         if count < 0:
             module.fail_json(msg="Count must be greater than zero")
@@ -935,18 +942,19 @@ def main():
             if state == "running":
                 # make sure a container with `name` is running
                 if name and "/" + name not in map(lambda x: x.get('Name'), running_containers):
-                    manager.start_containers(deployed_containers)
+                    manager.start_containers(deployed_containers, wait=wait)
 
                 # start more containers if we don't have enough
                 elif delta > 0:
                     containers = manager.create_containers(delta)
-                    manager.start_containers(containers)
+                    manager.start_containers(containers, wait=wait)
 
                 # stop containers if we have too many
                 elif delta < 0:
                     containers_to_stop = running_containers[0:abs(delta)]
                     containers = manager.stop_containers(containers_to_stop)
                     manager.remove_containers(containers_to_stop)
+
 
                 facts = manager.get_running_containers()
             else:
