@@ -1,7 +1,0 @@
-- name: Docker stuff
-  hosts: localhost
-  tasks:
-    - name: create data volume
-      docker_image: path=data-volume name=lorin/mezzanine-data
-    - name: create mezzanine image
-      docker_image: path=mezzanine name=lorin/mezzanine
