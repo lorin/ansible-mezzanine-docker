@@ -38,6 +38,8 @@
       # We can't run collectstatic if the secret key is blank,
       # so we just pass in an arbitrary one
       SECRET_KEY: nonblanksecretkey
+  - name: script directory
+    file: path={{ script_path }} state=directory
   - name: copy scripts for setting site id and admin at launch time
     copy: src=files/scripts/{{ item }} dest={{ script_path }}/{{ item }} mode=0755
     with_items:
