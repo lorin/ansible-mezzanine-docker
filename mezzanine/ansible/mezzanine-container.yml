@@ -39,5 +39,8 @@
       # so we just pass in an arbitrary one
       SECRET_KEY: nonblanksecretkey
   - name: copy scripts for setting site id and admin at launch time
-    copy: src=files/scripts dest={{ script_path }}
+    copy: src=files/scripts/{{ item }} dest={{ script_path }}/{{ item }} mode=0755
+    with_items:
+      - setadmin.py
+      - setsite.py
 
