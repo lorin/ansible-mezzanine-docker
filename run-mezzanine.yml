@@ -13,6 +13,9 @@
     nevercache_key: randomnevercachekey
     gunicorn_port: 8000
     docker_host: "{{ lookup('env', 'DOCKER_HOST') | regex_replace('^tcp://(.*):\\d+$', '\\\\1') | default('localhost', true) }}"
+    admin_password: password
+    project_dir: /srv/project
+    website_domain: "{{ docker_host }}.xip.io"
     mezzanine_env:
       SECRET_KEY: "{{ secret_key }}"
       NEVERCACHE_KEY: "{{ nevercache_key }}"
@@ -23,6 +26,12 @@
       DATABASE_HOST: "{{ database_host }}"
       DATABASE_PORT: "{{ database_port }}"
       GUNICORN_PORT: "{{ gunicorn_port }}"
+    setadmin_env:
+      PROJECT_DIR: "{{ project_dir }}"
+      ADMIN_PASSWORD: "{{ admin_password }}"
+    setsite_env:
+      PROJECT_DIR: "{{ project_dir }}"
+      WEBSITE_DOMAIN: "{{ website_domain }}"
 
   tasks:
     - name: start the postgres container
@@ -49,6 +58,18 @@
         - syncdb
         - migrate
       register: django
+    - name: set the site id
+      docker:
+        image: lorin/mezzanine:latest
+        command: python /srv/scripts/setsite.py
+        env: "{{ setsite_env.update(mezzanine_env) }}{{ setsite_env }}"
+        wait: yes
+    - name: set the admin password
+      docker:
+        image: lorin/mezzanine:latest
+        command: python /srv/scripts/setadmin.py
+        env: "{{ setadmin_env.update(mezzanine_env) }}{{ setadmin_env }}"
+        wait: yes
     - name: start the mezzanine container
       docker:
         image: lorin/mezzanine:latest
