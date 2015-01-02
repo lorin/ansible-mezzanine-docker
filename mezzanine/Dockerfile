@@ -1,4 +1,5 @@
 FROM ansible/ubuntu14.04-ansible:stable
+MAINTAINER lorin@ansiblebook.com
 
 ADD ansible /srv/ansible
 WORKDIR /srv/ansible
