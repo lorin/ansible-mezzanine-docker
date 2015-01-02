@@ -12,6 +12,7 @@
     secret_key: randomsecretkey
     nevercache_key: randomnevercachekey
     gunicorn_port: 8000
+    docker_host: "{{ lookup('env', 'DOCKER_HOST') | regex_replace('^tcp://(.*):\\d+$', '\\\\1') | default('localhost', true) }}"
     mezzanine_env:
       SECRET_KEY: "{{ secret_key }}"
       NEVERCACHE_KEY: "{{ nevercache_key }}"
@@ -40,8 +41,12 @@
         env:
           POSTGRES_USER: "{{ database_user }}"
           POSTGRES_PASSWORD: "{{ database_password }}"
-    - set_fact:
+    - name: capture database ip address and mapped port
+      set_fact:
         database_host: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
+        mapped_database_port: "{{ docker_containers[0].NetworkSettings.Ports['5432/tcp'][0].HostPort}}"
+    - name: wait for database to come up
+      wait_for: host={{ docker_host }} port={{ mapped_database_port }}
     - name: initialize database
       docker:
         image: lorin/mezzanine:latest
