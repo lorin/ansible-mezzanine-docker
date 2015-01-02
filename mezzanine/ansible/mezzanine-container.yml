@@ -4,6 +4,7 @@
     mezzanine_repo_url: https://github.com/lorin/mezzanine-example.git
     mezzanine_proj_path: /srv/project
     mezzanine_reqs_path: requirements.txt
+    script_path: /srv/scripts
   tasks:
   - name: install apt packages
     apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
@@ -37,4 +38,6 @@
       # We can't run collectstatic if the secret key is blank,
       # so we just pass in an arbitrary one
       SECRET_KEY: nonblanksecretkey
+  - name: copy scripts for setting site id and admin at launch time
+    copy: src=files/scripts dest={{ script_path }}
 
