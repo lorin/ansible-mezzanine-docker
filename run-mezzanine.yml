@@ -39,6 +39,7 @@
         image: postgres:9.4
         name: postgres
         publish_all_ports: True
+        volumes: /var/lib/postgresql/data:/pgdata
         env:
           POSTGRES_USER: "{{ database_user }}"
           POSTGRES_PASSWORD: "{{ database_password }}"
