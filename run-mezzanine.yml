@@ -94,6 +94,10 @@
         name: mezzanine
         env: "{{ mezzanine_env }}"
         command: cron -f
+    - name: start the cert container
+      docker:
+        image: lorin/certs:latest
+        name: certs
     - name: run nginx
       docker:
         image: lorin/nginx-mezzanine:latest
@@ -103,4 +107,5 @@
         name: nginx
         volumes_from:
           - mezzanine
+          - certs
         links: mezzanine
