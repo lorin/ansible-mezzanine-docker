@@ -61,13 +61,13 @@
     - name: set the site id
       docker:
         image: lorin/mezzanine:latest
-        command: python /srv/scripts/setsite.py
+        command: /srv/scripts/setsite.py
         env: "{{ setsite_env.update(mezzanine_env) }}{{ setsite_env }}"
         wait: yes
     - name: set the admin password
       docker:
         image: lorin/mezzanine:latest
-        command: python /srv/scripts/setadmin.py
+        command: /srv/scripts/setadmin.py
         env: "{{ setadmin_env.update(mezzanine_env) }}{{ setadmin_env }}"
         wait: yes
     - name: start the memcached container
