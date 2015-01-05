@@ -73,12 +73,6 @@
         image: lorin/memcached:latest
         name: memcached
         publish_all_ports: True
-    - name: capture memcached ip address and mapped port
-      set_fact:
-        memcached_host: "{{ docker_containers[0].NetworkSettings.IPAddress }}"
-        mapped_memcached_port: "{{ docker_containers[0].NetworkSettings.Ports['11211/tcp'][0].HostPort}}"
-    - name:  wait for memcached to come up
-      wait_for: host={{ docker_host }} port={{ mapped_memcached_port }}
     - name: start the mezzanine container
       docker:
         image: lorin/mezzanine:latest
