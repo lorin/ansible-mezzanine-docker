@@ -72,13 +72,11 @@
       docker:
         image: lorin/memcached:latest
         name: memcached
-        publish_all_ports: True
     - name: start the mezzanine container
       docker:
         image: lorin/mezzanine:latest
         name: mezzanine
         env: "{{ mezzanine_env }}"
-        ports: "{{ gunicorn_port }}:{{ gunicorn_port }}"
         links: memcached
     - name: start the mezzanine cron job
       docker:
